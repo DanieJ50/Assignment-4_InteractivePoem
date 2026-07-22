@@ -471,6 +471,8 @@ const filterButtons = document.querySelector("#filter-buttons");
 const recipeSearch = document.querySelector("#recipe-search");
 const victoryScreen = document.querySelector("#victory-screen");
 
+// Always begin with the victory popup closed
+victoryScreen.hidden = true;
 let selectedTile = null;
 let solvedIds = new Set();
 let pointerTile = null;
