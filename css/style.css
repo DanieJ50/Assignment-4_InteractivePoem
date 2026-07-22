@@ -637,7 +637,9 @@ h3 {
   text-transform: uppercase;
   letter-spacing: .08em;
 }
-/* Keep the victory popup closed until the puzzle is completed */
+
+
+/* Keep the completion overlay hidden until JavaScript removes the hidden attribute. */
 .victory-screen[hidden] {
   display: none !important;
 }
@@ -767,4 +769,14 @@ footer {
     scroll-behavior: auto !important;
     transition-duration: .01ms !important;
   }
+}
+
+
+.poem-complete-button {
+  width: 100%;
+  margin-top: 20px;
+}
+
+.poem-complete-button[hidden] {
+  display: none !important;
 }
