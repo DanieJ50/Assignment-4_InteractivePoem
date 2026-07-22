@@ -105,7 +105,18 @@
           The poem starts hidden. Each correct puzzle piece reveals its matching line in the original order.
         </p>
       </div>
-      <ol id="poem-lines" class="poem-lines" aria-live="polite"></ol>
+      <div>
+        <ol id="poem-lines" class="poem-lines" aria-live="polite"></ol>
+
+        <button
+          class="button button-primary poem-complete-button"
+          id="celebration-button"
+          type="button"
+          hidden
+        >
+          I read the full poem — celebrate! ✨
+        </button>
+      </div>
     </section>
 
     <section class="meaning-card panel" aria-labelledby="meaning-title">
@@ -138,7 +149,7 @@
     <div id="filter-buttons" class="filter-buttons" aria-label="Recipe categories"></div>
     <div id="recipe-grid" class="recipe-grid"></div>
   </dialog>
-  </div>
+
   <div id="victory-screen" class="victory-screen" hidden>
     <section class="victory-card" role="dialog" aria-modal="true" aria-labelledby="victory-title">
       <p class="victory-icons">🍓🧩✨🧁✨🧩🍓</p>
@@ -146,7 +157,10 @@
       <p>You matched every recipe and stitched the entire poem together.</p>
       <button class="button button-primary" id="play-again-button" type="button">Build it again</button>
     </section>
-    </section>
+  </div>
+
+  <footer>
+    <p>Designed and coded by Danielle Julian · Berry Vibes Studio · Assignment 4 Interactive Poem</p>
   </footer>
 </body>
 </html>
