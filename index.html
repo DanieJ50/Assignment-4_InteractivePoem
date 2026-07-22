@@ -3,164 +3,422 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="BerryBelle's Cozy Recipe Quilt is a draggable CCD recipe riddle puzzle and interactive poem by Danielle Julian.">
-  <title>BerryBelle's Cozy Recipe Quilt — Danielle Julian</title>
+
+  <meta
+    name="description"
+    content="Create a customizable Berry Vibes Studio CCD recipe quilt and a different interactive poem from the recipes you choose."
+  >
+
+  <title>Customize Your Cozy Recipe Quilt — Danielle Julian</title>
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Chewy&family=Nunito:wght@500;700;800;900&display=swap" rel="stylesheet">
+
+  <link
+    href="https://fonts.googleapis.com/css2?family=Chewy&family=Nunito:wght@500;700;800;900&display=swap"
+    rel="stylesheet"
+  >
 
   <link rel="stylesheet" href="css/style.css">
   <script src="js/script.js" defer></script>
 </head>
+
 <body>
   <div class="floating-berries" aria-hidden="true">
-    <span>🍓</span><span>✨</span><span>🍒</span><span>🌸</span><span>🍓</span><span>✨</span>
+    <span>🍓</span>
+    <span>✨</span>
+    <span>🍒</span>
+    <span>🌸</span>
+    <span>🍓</span>
+    <span>✨</span>
   </div>
 
   <header class="hero">
     <div class="hero-copy">
       <p class="eyebrow">Berry Vibes Studio presents</p>
-      <h1>BerryBelle's Cozy Recipe Quilt</h1>
+
+      <h1>Customize Your Cozy Recipe Quilt</h1>
+
       <p class="hero-text">
-        Match twelve CCD recipe tiles to their riddle-shaped quilt spaces.
-        Every correct match stitches another line into the interactive poem.
+        Pick any twelve CCD recipes, choose the poem mood, and build a completely
+        different draggable quilt. Every new selection creates new clues and a new poem.
       </p>
 
       <div class="hero-buttons">
-        <button class="button button-primary" id="restart-button" type="button">Restart the quilt</button>
-        <button class="button button-secondary" id="hint-button" type="button">Give me a hint</button>
-        <button class="button button-secondary" id="vault-button" type="button">Open recipe basket</button>
+        <button
+          class="button button-primary"
+          id="customize-button"
+          type="button"
+        >
+          Pick my recipes
+        </button>
+
+        <button
+          class="button button-secondary"
+          id="restart-button"
+          type="button"
+          hidden
+        >
+          Restart this quilt
+        </button>
+
+        <button
+          class="button button-secondary"
+          id="edit-poem-button"
+          type="button"
+          hidden
+        >
+          Edit my poem
+        </button>
       </div>
     </div>
 
     <figure class="berrybelle-card">
       <div class="mascot-glow" aria-hidden="true"></div>
-      <img src="images/BerryBelle.jpg" alt="BerryBelle, a pink strawberry milk carton mascot">
-      <figcaption>BerryBelle guards the recipe basket 🍓</figcaption>
+
+      <img
+        src="images/BerryBelle.jpg"
+        alt="BerryBelle, a pink strawberry milk carton mascot"
+      >
+
+      <figcaption>BerryBelle helps you design every quilt 🍓</figcaption>
     </figure>
   </header>
 
   <main class="page-shell">
-    <section class="instruction-card" aria-labelledby="instructions-title">
-      <div>
-        <p class="section-label">How to play</p>
-        <h2 id="instructions-title">Read a quilt riddle, then drag its matching recipe into the space.</h2>
-        <p>
-          You can also tap or click a recipe tile, then tap or click its matching quilt space.
-          Keyboard players can use <strong>Enter</strong> or <strong>Space</strong>.
-        </p>
-      </div>
 
-      <div class="score-badge" aria-live="polite">
-        <span id="score-number">0</span>
-        <small>of 12 stitched</small>
-      </div>
-    </section>
+    <section
+      class="builder-panel panel"
+      id="builder-panel"
+      aria-labelledby="builder-title"
+    >
+      <div class="builder-heading">
+        <div>
+          <p class="section-label">Step one · customize</p>
+          <h2 id="builder-title">Choose exactly twelve recipes</h2>
 
-    <section class="progress-area" aria-label="Puzzle progress">
-      <div class="progress-track">
-        <div class="progress-fill" id="progress-fill"></div>
-      </div>
-      <p id="status-message" class="status-message" role="status" aria-live="polite">
-        Choose a recipe tile to begin.
-      </p>
-    </section>
-
-    <section class="workspace">
-      <section class="tray panel" aria-labelledby="tray-title">
-        <div class="section-heading">
-          <div>
-            <p class="section-label">Loose puzzle pieces</p>
-            <h2 id="tray-title">Recipe Tile Tray</h2>
-          </div>
-          <button class="mini-button" id="shuffle-button" type="button">Shuffle</button>
+          <p class="supporting-copy">
+            Your choices determine the puzzle pieces, riddle clues, quilt colors,
+            and poem lines. Choose them in the order you want them to appear in the poem.
+          </p>
         </div>
 
-        <p class="supporting-copy">
-          The recipe name is your puzzle piece. The quilt riddles are the spaces it must fit.
-        </p>
-
-        <div id="tile-tray" class="tile-tray" aria-label="Draggable recipe tiles"></div>
-      </section>
-
-      <section class="quilt-panel panel" aria-labelledby="quilt-title">
-        <div class="section-heading">
-          <div>
-            <p class="section-label">The poem puzzle</p>
-            <h2 id="quilt-title">The Unfinished Cozy Quilt</h2>
-          </div>
-          <span class="quilt-key">🍓 + 🧩 + ✍🏽</span>
+        <div class="selection-counter" aria-live="polite">
+          <span id="selection-count">0</span>
+          <small>of 12 chosen</small>
         </div>
-
-        <div id="quilt-board" class="quilt-board" aria-label="Recipe riddle quilt spaces"></div>
-      </section>
-    </section>
-
-    <section class="poem-card panel" aria-labelledby="poem-title">
-      <div class="poem-copy">
-        <p class="section-label">Interactive poem</p>
-        <h2 id="poem-title">A Recipe Can Become a Place</h2>
-        <p>
-          The poem starts hidden. Each correct puzzle piece reveals its matching line in the original order.
-        </p>
       </div>
-      <div>
-        <ol id="poem-lines" class="poem-lines" aria-live="polite"></ol>
+
+      <div class="builder-controls">
+        <label class="control-group" for="poem-mood">
+          <span>Poem mood</span>
+
+          <select id="poem-mood">
+            <option value="cozy">Cozy Dream</option>
+            <option value="playful">Playful Game</option>
+            <option value="bold">Bold Designer</option>
+          </select>
+        </label>
+
+        <label class="control-group grow-control" for="picker-search">
+          <span>Search recipes</span>
+
+          <input
+            id="picker-search"
+            type="search"
+            placeholder="Try pancakes, cinnamon rolls, mocha…"
+          >
+        </label>
+      </div>
+
+      <div
+        class="filter-buttons"
+        id="picker-filters"
+        aria-label="Filter selectable recipes"
+      ></div>
+
+      <div class="builder-action-row">
+        <button
+          class="mini-button"
+          id="random-recipes-button"
+          type="button"
+        >
+          Surprise me with 12
+        </button>
 
         <button
-          class="button button-primary poem-complete-button"
-          id="celebration-button"
+          class="mini-button"
+          id="signature-recipes-button"
           type="button"
-          hidden
         >
-          I read the full poem — celebrate! ✨
+          Use signature favorites
+        </button>
+
+        <button
+          class="mini-button"
+          id="clear-recipes-button"
+          type="button"
+        >
+          Clear selection
+        </button>
+      </div>
+
+      <section class="selected-strip" aria-labelledby="selected-title">
+        <h3 id="selected-title">Your poem order</h3>
+
+        <p>
+          The first recipe you choose becomes line one. Remove and reselect recipes
+          to change the order.
+        </p>
+
+        <ol id="selected-recipes" class="selected-recipes"></ol>
+      </section>
+
+      <div
+        id="recipe-picker-grid"
+        class="recipe-picker-grid"
+        aria-label="Recipe selection cards"
+      ></div>
+
+      <div class="build-footer">
+        <p id="builder-message" role="status" aria-live="polite">
+          Choose twelve recipes to unlock your custom quilt.
+        </p>
+
+        <button
+          class="button button-primary"
+          id="build-quilt-button"
+          type="button"
+          disabled
+        >
+          Build my custom quilt
         </button>
       </div>
     </section>
 
-    <section class="meaning-card panel" aria-labelledby="meaning-title">
-      <p class="section-label">Why this interaction matters</p>
-      <h2 id="meaning-title">The reader physically rebuilds the poem.</h2>
-      <p>
-        Recipes begin as scattered memories. Dragging, matching, and arranging them turns comfort food into
-        language. The final quilt represents how Cozy Core combines creativity, comparison, and familiar food
-        without treating joy as something that needs to disappear.
-      </p>
+    <section id="game-area" hidden>
+      <section class="instruction-card" aria-labelledby="instructions-title">
+        <div>
+          <p class="section-label">Step two · play</p>
+
+          <h2 id="instructions-title">
+            Read each riddle, then drag its matching recipe into the quilt.
+          </h2>
+
+          <p>
+            You can also click or tap a recipe tile, then click or tap the matching space.
+            Keyboard players can use <strong>Enter</strong> or <strong>Space</strong>.
+          </p>
+        </div>
+
+        <div class="score-badge" aria-live="polite">
+          <span id="score-number">0</span>
+          <small>of 12 stitched</small>
+        </div>
+      </section>
+
+      <section class="progress-area" aria-label="Puzzle progress">
+        <div class="progress-track">
+          <div class="progress-fill" id="progress-fill"></div>
+        </div>
+
+        <p
+          id="status-message"
+          class="status-message"
+          role="status"
+          aria-live="polite"
+        >
+          Choose a recipe tile to begin.
+        </p>
+      </section>
+
+      <section class="game-toolbar panel">
+        <div>
+          <p class="section-label">Current custom quilt</p>
+          <h2 id="current-mood-title">Cozy Dream poem</h2>
+        </div>
+
+        <div class="toolbar-buttons">
+          <button class="mini-button" id="hint-button" type="button">
+            Give me a hint
+          </button>
+
+          <button class="mini-button" id="shuffle-button" type="button">
+            Shuffle tiles
+          </button>
+
+          <button class="mini-button" id="change-recipes-button" type="button">
+            Choose different recipes
+          </button>
+        </div>
+      </section>
+
+      <section class="workspace">
+        <section class="tray panel" aria-labelledby="tray-title">
+          <div class="section-heading">
+            <div>
+              <p class="section-label">Loose puzzle pieces</p>
+              <h2 id="tray-title">Your Recipe Tile Tray</h2>
+            </div>
+          </div>
+
+          <p class="supporting-copy">
+            These are the twelve recipes you chose. Match each name to its flavor riddle.
+          </p>
+
+          <div
+            id="tile-tray"
+            class="tile-tray"
+            aria-label="Draggable recipe tiles"
+          ></div>
+        </section>
+
+        <section class="quilt-panel panel" aria-labelledby="quilt-title">
+          <div class="section-heading">
+            <div>
+              <p class="section-label">The custom poem puzzle</p>
+              <h2 id="quilt-title">The Unfinished Recipe Quilt</h2>
+            </div>
+
+            <span class="quilt-key">🍓 + 🧩 + ✍🏽</span>
+          </div>
+
+          <div
+            id="quilt-board"
+            class="quilt-board"
+            aria-label="Custom recipe riddle quilt spaces"
+          ></div>
+        </section>
+      </section>
+
+      <section class="poem-card panel" aria-labelledby="poem-title">
+        <div class="poem-copy">
+          <p class="section-label">Step three · read</p>
+          <h2 id="poem-title">Your Custom CCD Poem</h2>
+
+          <p>
+            Your selected recipes created this poem. Each correct match reveals
+            its line in the order you chose.
+          </p>
+        </div>
+
+        <div>
+          <ol
+            id="poem-lines"
+            class="poem-lines"
+            aria-live="polite"
+          ></ol>
+
+          <button
+            class="button button-primary poem-complete-button"
+            id="celebration-button"
+            type="button"
+            hidden
+          >
+            I read the full poem — celebrate! ✨
+          </button>
+        </div>
+      </section>
+
+      <section class="meaning-card panel" aria-labelledby="meaning-title">
+        <p class="section-label">Why customization matters</p>
+
+        <h2 id="meaning-title">
+          The reader becomes the poem’s co-designer.
+        </h2>
+
+        <p>
+          Choosing the recipes changes the language before the puzzle even begins.
+          The reader then physically rebuilds the poem by matching, moving, and arranging
+          food memories into a quilt. Every playthrough can become a different composition.
+        </p>
+      </section>
     </section>
   </main>
 
-  <dialog id="recipe-vault" class="recipe-dialog">
+  <dialog id="poem-editor" class="recipe-dialog">
     <div class="dialog-header">
       <div>
-        <p class="section-label">Danielle's CCD collection</p>
-        <h2>BerryBelle's Recipe Basket</h2>
+        <p class="section-label">Optional customization</p>
+        <h2>Edit your poem lines</h2>
       </div>
-      <button class="close-button" id="close-vault" type="button" aria-label="Close recipe basket">×</button>
+
+      <button
+        class="close-button"
+        id="close-poem-editor"
+        type="button"
+        aria-label="Close poem editor"
+      >
+        ×
+      </button>
     </div>
 
     <p class="dialog-intro">
-      The puzzle uses twelve signature recipes. The basket keeps the complete safe CCD collection together.
+      The game creates a poem automatically, but you can rewrite any line before
+      or during the puzzle.
     </p>
 
-    <label class="search-label" for="recipe-search">Search the recipe basket</label>
-    <input id="recipe-search" class="recipe-search" type="search" placeholder="Try pancakes, mocha, pizza…">
+    <div id="poem-editor-fields" class="poem-editor-fields"></div>
 
-    <div id="filter-buttons" class="filter-buttons" aria-label="Recipe categories"></div>
-    <div id="recipe-grid" class="recipe-grid"></div>
+    <div class="dialog-actions">
+      <button
+        class="button button-secondary"
+        id="regenerate-poem-button"
+        type="button"
+      >
+        Regenerate from my mood
+      </button>
+
+      <button
+        class="button button-primary"
+        id="save-poem-button"
+        type="button"
+      >
+        Save poem changes
+      </button>
+    </div>
   </dialog>
 
   <div id="victory-screen" class="victory-screen" hidden>
-    <section class="victory-card" role="dialog" aria-modal="true" aria-labelledby="victory-title">
+    <section
+      class="victory-card"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="victory-title"
+    >
       <p class="victory-icons">🍓🧩✨🧁✨🧩🍓</p>
-      <h2 id="victory-title">The Cozy Quilt is complete!</h2>
-      <p>You matched every recipe and stitched the entire poem together.</p>
-      <button class="button button-primary" id="play-again-button" type="button">Build it again</button>
+
+      <h2 id="victory-title">Your custom quilt is complete!</h2>
+
+      <p>
+        You chose the recipes, rebuilt the poem, and finished a one-of-a-kind quilt.
+      </p>
+
+      <div class="victory-buttons">
+        <button
+          class="button button-primary"
+          id="play-again-button"
+          type="button"
+        >
+          Replay this quilt
+        </button>
+
+        <button
+          class="button button-secondary"
+          id="new-quilt-button"
+          type="button"
+        >
+          Make a different quilt
+        </button>
+      </div>
     </section>
   </div>
 
   <footer>
-    <p>Designed and coded by Danielle Julian · Berry Vibes Studio · Assignment 4 Interactive Poem</p>
+    <p>
+      Designed and coded by Danielle Julian · Berry Vibes Studio ·
+      Assignment 4 Interactive Poem
+    </p>
   </footer>
 </body>
 </html>
