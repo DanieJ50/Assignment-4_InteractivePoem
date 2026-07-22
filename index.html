@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="BerryBelle's Cozy Recipe Quilt is a draggable CCD recipe riddle puzzle and interactive poem by Danielle Julian.">
+  <title>BerryBelle's Cozy Recipe Quilt — Danielle Julian</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Chewy&family=Nunito:wght@500;700;800;900&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="css/style.css">
+  <script src="js/script.js" defer></script>
+</head>
+<body>
+  <div class="floating-berries" aria-hidden="true">
+    <span>🍓</span><span>✨</span><span>🍒</span><span>🌸</span><span>🍓</span><span>✨</span>
+  </div>
+
+  <header class="hero">
+    <div class="hero-copy">
+      <p class="eyebrow">Berry Vibes Studio presents</p>
+      <h1>BerryBelle's Cozy Recipe Quilt</h1>
+      <p class="hero-text">
+        Match twelve CCD recipe tiles to their riddle-shaped quilt spaces.
+        Every correct match stitches another line into the interactive poem.
+      </p>
+
+      <div class="hero-buttons">
+        <button class="button button-primary" id="restart-button" type="button">Restart the quilt</button>
+        <button class="button button-secondary" id="hint-button" type="button">Give me a hint</button>
+        <button class="button button-secondary" id="vault-button" type="button">Open recipe basket</button>
+      </div>
+    </div>
+
+    <figure class="berrybelle-card">
+      <div class="mascot-glow" aria-hidden="true"></div>
+      <img src="images/BerryBelle.jpg" alt="BerryBelle, a pink strawberry milk carton mascot">
+      <figcaption>BerryBelle guards the recipe basket 🍓</figcaption>
+    </figure>
+  </header>
+
+  <main class="page-shell">
+    <section class="instruction-card" aria-labelledby="instructions-title">
+      <div>
+        <p class="section-label">How to play</p>
+        <h2 id="instructions-title">Read a quilt riddle, then drag its matching recipe into the space.</h2>
+        <p>
+          You can also tap or click a recipe tile, then tap or click its matching quilt space.
+          Keyboard players can use <strong>Enter</strong> or <strong>Space</strong>.
+        </p>
+      </div>
+
+      <div class="score-badge" aria-live="polite">
+        <span id="score-number">0</span>
+        <small>of 12 stitched</small>
+      </div>
+    </section>
+
+    <section class="progress-area" aria-label="Puzzle progress">
+      <div class="progress-track">
+        <div class="progress-fill" id="progress-fill"></div>
+      </div>
+      <p id="status-message" class="status-message" role="status" aria-live="polite">
+        Choose a recipe tile to begin.
+      </p>
+    </section>
+
+    <section class="workspace">
+      <section class="tray panel" aria-labelledby="tray-title">
+        <div class="section-heading">
+          <div>
+            <p class="section-label">Loose puzzle pieces</p>
+            <h2 id="tray-title">Recipe Tile Tray</h2>
+          </div>
+          <button class="mini-button" id="shuffle-button" type="button">Shuffle</button>
+        </div>
+
+        <p class="supporting-copy">
+          The recipe name is your puzzle piece. The quilt riddles are the spaces it must fit.
+        </p>
+
+        <div id="tile-tray" class="tile-tray" aria-label="Draggable recipe tiles"></div>
+      </section>
+
+      <section class="quilt-panel panel" aria-labelledby="quilt-title">
+        <div class="section-heading">
+          <div>
+            <p class="section-label">The poem puzzle</p>
+            <h2 id="quilt-title">The Unfinished Cozy Quilt</h2>
+          </div>
+          <span class="quilt-key">🍓 + 🧩 + ✍🏽</span>
+        </div>
+
+        <div id="quilt-board" class="quilt-board" aria-label="Recipe riddle quilt spaces"></div>
+      </section>
+    </section>
+
+    <section class="poem-card panel" aria-labelledby="poem-title">
+      <div class="poem-copy">
+        <p class="section-label">Interactive poem</p>
+        <h2 id="poem-title">A Recipe Can Become a Place</h2>
+        <p>
+          The poem starts hidden. Each correct puzzle piece reveals its matching line in the original order.
+        </p>
+      </div>
+      <ol id="poem-lines" class="poem-lines" aria-live="polite"></ol>
+    </section>
+
+    <section class="meaning-card panel" aria-labelledby="meaning-title">
+      <p class="section-label">Why this interaction matters</p>
+      <h2 id="meaning-title">The reader physically rebuilds the poem.</h2>
+      <p>
+        Recipes begin as scattered memories. Dragging, matching, and arranging them turns comfort food into
+        language. The final quilt represents how Cozy Core combines creativity, comparison, and familiar food
+        without treating joy as something that needs to disappear.
+      </p>
+    </section>
+  </main>
+
+  <dialog id="recipe-vault" class="recipe-dialog">
+    <div class="dialog-header">
+      <div>
+        <p class="section-label">Danielle's CCD collection</p>
+        <h2>BerryBelle's Recipe Basket</h2>
+      </div>
+      <button class="close-button" id="close-vault" type="button" aria-label="Close recipe basket">×</button>
+    </div>
+
+    <p class="dialog-intro">
+      The puzzle uses twelve signature recipes. The basket keeps the complete safe CCD collection together.
+    </p>
+
+    <label class="search-label" for="recipe-search">Search the recipe basket</label>
+    <input id="recipe-search" class="recipe-search" type="search" placeholder="Try pancakes, mocha, pizza…">
+
+    <div id="filter-buttons" class="filter-buttons" aria-label="Recipe categories"></div>
+    <div id="recipe-grid" class="recipe-grid"></div>
+  </dialog>
+
+  <div id="victory-screen" class="victory-screen" hidden>
+    <section class="victory-card" role="dialog" aria-modal="true" aria-labelledby="victory-title">
+      <p class="victory-icons">🍓🧩✨🧁✨🧩🍓</p>
+      <h2 id="victory-title">The Cozy Quilt is complete!</h2>
+      <p>You matched every recipe and stitched the entire poem together.</p>
+      <button class="button button-primary" id="play-again-button" type="button">Build it again</button>
+    </section>
+  </div>
+
+  <footer>
+    <p>Designed and coded by Danielle Julian · Berry Vibes Studio · Assignment 4 Interactive Poem</p>
+  </footer>
+</body>
+</html>
