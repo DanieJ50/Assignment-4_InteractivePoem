@@ -780,3 +780,368 @@ footer {
 .poem-complete-button[hidden] {
   display: none !important;
 }
+/* ---------- CUSTOMIZABLE QUILT V3 ---------- */
+
+[hidden] {
+  display: none !important;
+}
+
+.builder-panel {
+  padding: 28px;
+  margin-bottom: 22px;
+  background:
+    linear-gradient(rgba(255, 255, 255, .95), rgba(255, 255, 255, .95)),
+    repeating-linear-gradient(
+      45deg,
+      #ffd9e5 0 22px,
+      #fff8db 22px 44px,
+      #e4f4c4 44px 66px
+    );
+}
+
+.builder-heading {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 24px;
+}
+
+.selection-counter {
+  min-width: 160px;
+  padding: 18px;
+  text-align: center;
+  border: 3px dashed var(--berry);
+  border-radius: 24px;
+  color: var(--berry-dark);
+  background: var(--cream);
+}
+
+.selection-counter span {
+  display: block;
+  font-family: "Chewy", cursive;
+  font-size: 3.5rem;
+  line-height: .9;
+}
+
+.selection-counter small {
+  font-weight: 900;
+}
+
+.builder-controls {
+  display: flex;
+  gap: 16px;
+  margin: 22px 0 16px;
+  align-items: end;
+}
+
+.control-group {
+  display: grid;
+  gap: 7px;
+  font-weight: 900;
+  color: var(--berry-dark);
+}
+
+.grow-control {
+  flex: 1;
+}
+
+.control-group select,
+.control-group input {
+  min-height: 48px;
+  padding: 11px 14px;
+  border: 3px solid var(--brown);
+  border-radius: 15px;
+  color: var(--ink);
+  background: var(--white);
+}
+
+.builder-action-row,
+.toolbar-buttons,
+.dialog-actions,
+.victory-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.builder-action-row {
+  margin: 15px 0 20px;
+}
+
+.selected-strip {
+  padding: 18px;
+  margin-bottom: 18px;
+  border: 3px dashed var(--berry);
+  border-radius: 22px;
+  background: rgba(255, 249, 237, .92);
+}
+
+.selected-strip h3 {
+  margin-bottom: 5px;
+  font-size: 1.45rem;
+}
+
+.selected-strip p {
+  margin-top: 0;
+}
+
+.selected-recipes {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 9px;
+  margin: 12px 0 0;
+  padding: 0;
+  list-style: none;
+  counter-reset: selected;
+}
+
+.selected-chip {
+  counter-increment: selected;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 9px 12px;
+  border: 2px solid var(--brown);
+  border-radius: 999px;
+  color: var(--berry-dark);
+  background: var(--white);
+  font-weight: 900;
+}
+
+.selected-chip::before {
+  content: counter(selected);
+  display: grid;
+  place-items: center;
+  width: 25px;
+  height: 25px;
+  border-radius: 50%;
+  color: var(--white);
+  background: var(--berry);
+  font-size: .78rem;
+}
+
+.chip-remove {
+  width: 25px;
+  height: 25px;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  color: var(--white);
+  background: var(--berry-dark);
+  font-weight: 900;
+}
+
+.recipe-picker-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(215px, 1fr));
+  gap: 12px;
+  max-height: 580px;
+  padding: 6px;
+  overflow: auto;
+}
+
+.picker-card {
+  position: relative;
+  padding: 16px;
+  text-align: left;
+  border: 3px solid var(--brown);
+  border-radius: 21px;
+  color: var(--ink);
+  background: var(--white);
+  box-shadow: 0 6px 0 rgba(91, 52, 38, .14);
+  transition:
+    transform .18s ease,
+    background .18s ease,
+    outline .18s ease,
+    opacity .18s ease;
+}
+
+.picker-card:hover,
+.picker-card:focus-visible {
+  transform: translateY(-3px);
+  outline: 4px solid rgba(255, 215, 96, .72);
+}
+
+.picker-card.selected {
+  color: var(--berry-dark);
+  border-color: var(--berry);
+  background: linear-gradient(145deg, #fff4a9, #ffdce7);
+  outline: 4px solid rgba(200, 36, 88, .22);
+}
+
+.picker-card.unavailable {
+  opacity: .46;
+}
+
+.picker-card h3 {
+  margin: 0 0 7px;
+  line-height: 1.15;
+}
+
+.picker-card p {
+  margin: 0;
+  line-height: 1.42;
+}
+
+.picker-card-number {
+  position: absolute;
+  top: 9px;
+  right: 9px;
+  display: grid;
+  place-items: center;
+  min-width: 30px;
+  height: 30px;
+  padding: 0 7px;
+  border-radius: 999px;
+  color: var(--white);
+  background: var(--berry);
+  font-weight: 900;
+}
+
+.picker-category {
+  margin-top: 11px !important;
+  color: var(--berry);
+  font-size: .78rem;
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: .08em;
+}
+
+.build-footer {
+  position: sticky;
+  bottom: 10px;
+  z-index: 5;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 18px;
+  margin-top: 22px;
+  padding: 15px;
+  border: 3px solid var(--brown);
+  border-radius: 20px;
+  background: rgba(255, 255, 255, .95);
+  box-shadow: var(--shadow);
+}
+
+.build-footer p {
+  margin: 0;
+  font-weight: 900;
+  color: var(--berry-dark);
+}
+
+.button:disabled {
+  cursor: not-allowed;
+  opacity: .48;
+  transform: none;
+  box-shadow: none;
+}
+
+.game-toolbar {
+  display: flex;
+  justify-content: space-between;
+  gap: 20px;
+  align-items: center;
+  padding: 20px 24px;
+  margin-bottom: 20px;
+  background: linear-gradient(135deg, #fff9dd, #ffe4ed);
+}
+
+.game-toolbar h2 {
+  margin-bottom: 0;
+}
+
+.poem-editor-fields {
+  display: grid;
+  gap: 13px;
+  margin: 20px 0;
+}
+
+.poem-edit-row {
+  display: grid;
+  grid-template-columns: 44px minmax(0, 1fr);
+  gap: 11px;
+  align-items: start;
+}
+
+.poem-edit-number {
+  display: grid;
+  place-items: center;
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  color: var(--white);
+  background: var(--berry);
+  font-weight: 900;
+}
+
+.poem-edit-row label {
+  display: grid;
+  gap: 5px;
+  color: var(--berry-dark);
+  font-weight: 900;
+}
+
+.poem-edit-row textarea {
+  width: 100%;
+  min-height: 82px;
+  padding: 11px;
+  resize: vertical;
+  border: 3px solid var(--brown);
+  border-radius: 14px;
+  color: var(--ink);
+  background: var(--white);
+}
+
+.dialog-actions {
+  justify-content: flex-end;
+}
+
+.victory-buttons {
+  justify-content: center;
+  margin-top: 20px;
+}
+
+.empty-picker-message {
+  grid-column: 1 / -1;
+  padding: 30px;
+  text-align: center;
+  border: 3px dashed var(--berry);
+  border-radius: 20px;
+  background: var(--cream);
+  font-weight: 900;
+}
+
+@media (max-width: 760px) {
+  .builder-heading,
+  .builder-controls,
+  .build-footer,
+  .game-toolbar {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .selection-counter {
+    width: 100%;
+  }
+
+  .recipe-picker-grid {
+    grid-template-columns: 1fr;
+    max-height: 520px;
+  }
+
+  .build-footer {
+    position: static;
+  }
+
+  .toolbar-buttons,
+  .dialog-actions,
+  .victory-buttons {
+    flex-direction: column;
+  }
+
+  .toolbar-buttons button,
+  .dialog-actions button,
+  .victory-buttons button {
+    width: 100%;
+  }
+}
