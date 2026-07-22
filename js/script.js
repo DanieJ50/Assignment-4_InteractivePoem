@@ -9,6 +9,12 @@ const categories = {
   chilled: { label: "Chilled", emoji: "🍨" }
 };
 
+const moodLabels = {
+  cozy: "Cozy Dream",
+  playful: "Playful Game",
+  bold: "Bold Designer"
+};
+
 const allRecipes = [
   {
     "name": "Fluffy CCD Pancakes",
@@ -372,92 +378,32 @@ const allRecipes = [
   }
 ];
 
-const puzzlePieces = [
-  {
-    "id": "pancakes",
-    "recipe": "Cinnamony Cinnamon Maple Buttermilk Pancakes",
-    "emoji": "🥞",
-    "clue": "Find the warm cloud stacked with cinnamon and maple.",
-    "line": "Morning rises in a cinnamon cloud,"
-  },
-  {
-    "id": "rolls",
-    "recipe": "Microwave Cinnamon Rolls",
-    "emoji": "🌀",
-    "clue": "Find the tiny spiral that turns warmth into courage.",
-    "line": "a soft spiral of courage turns warm,"
-  },
-  {
-    "id": "donuts",
-    "recipe": "Clear-Glaze Microwave Donuts",
-    "emoji": "🍩",
-    "clue": "Find the little rings shining beneath a clear glaze.",
-    "line": "glazed moons glow on a berry-colored sky,"
-  },
-  {
-    "id": "toast",
-    "recipe": "Cinnamon Greek Yogurt French Toast",
-    "emoji": "🍞",
-    "clue": "Find the bread that remembers how to become custardy.",
-    "line": "and bread remembers how to become soft again."
-  },
-  {
-    "id": "mocha",
-    "recipe": "Chili Mocha Latte",
-    "emoji": "☕",
-    "clue": "Find cocoa, coffee, and one tiny spark of heat.",
-    "line": "Coffee wakes the page with a cocoa sun,"
-  },
-  {
-    "id": "brownie",
-    "recipe": "Brownie Batter Cake",
-    "emoji": "🍫",
-    "clue": "Find the cake that keeps its center deliciously gooey.",
-    "line": "while chocolate keeps the brave parts gooey."
-  },
-  {
-    "id": "oreo",
-    "recipe": "Oreo Frozen Yogurt Bowl",
-    "emoji": "🍨",
-    "clue": "Find cold cream carrying crunchy cookie stars.",
-    "line": "Cold cookie stars crackle inside cream,"
-  },
-  {
-    "id": "bagel",
-    "recipe": "Egg and Avocado Bagel Sandwich",
-    "emoji": "🥯",
-    "clue": "Find the golden circle holding a whole morning together.",
-    "line": "and a golden bagel holds the day together."
-  },
-  {
-    "id": "pizza",
-    "recipe": "Mini Tortilla Pizza",
-    "emoji": "🍕",
-    "clue": "Find the tortilla dreaming of becoming a tiny pizza.",
-    "line": "A tortilla dreams itself into pizza,"
-  },
-  {
-    "id": "wrap",
-    "recipe": "Spinach Chicken Wrap",
-    "emoji": "🌯",
-    "clue": "Find the green fold wrapped around a savory afternoon.",
-    "line": "while green folds around a savory afternoon."
-  },
-  {
-    "id": "mousse",
-    "recipe": "Avocado Chocolate Mousse",
-    "emoji": "🥑",
-    "clue": "Find the unexpected ingredient that disappears into chocolate silk.",
-    "line": "Silk appears where nobody expected it,"
-  },
-  {
-    "id": "cakepops",
-    "recipe": "CCD Cake Pop Bites",
-    "emoji": "🍭",
-    "clue": "Find the smallest celebration in the recipe tray.",
-    "line": "and every tiny bite becomes a bright beginning."
-  }
+const signatureNames = [
+  "Cinnamony Cinnamon Maple Buttermilk Pancakes",
+  "Microwave Cinnamon Rolls",
+  "Clear-Glaze Microwave Donuts",
+  "Cinnamon Greek Yogurt French Toast",
+  "Chili Mocha Latte",
+  "Brownie Batter Cake",
+  "Oreo Frozen Yogurt Bowl",
+  "Egg and Avocado Bagel Sandwich",
+  "Mini Tortilla Pizza",
+  "Spinach Chicken Wrap",
+  "Avocado Chocolate Mousse",
+  "CCD Cake Pop Bites"
 ];
+
+const builderPanel = document.querySelector("#builder-panel");
+const gameArea = document.querySelector("#game-area");
+
+const selectionCount = document.querySelector("#selection-count");
+const selectedRecipesList = document.querySelector("#selected-recipes");
+const recipePickerGrid = document.querySelector("#recipe-picker-grid");
+const pickerSearch = document.querySelector("#picker-search");
+const pickerFilters = document.querySelector("#picker-filters");
+const poemMoodSelect = document.querySelector("#poem-mood");
+const buildQuiltButton = document.querySelector("#build-quilt-button");
+const builderMessage = document.querySelector("#builder-message");
 
 const tileTray = document.querySelector("#tile-tray");
 const quiltBoard = document.querySelector("#quilt-board");
@@ -465,69 +411,330 @@ const poemList = document.querySelector("#poem-lines");
 const scoreNumber = document.querySelector("#score-number");
 const progressFill = document.querySelector("#progress-fill");
 const statusMessage = document.querySelector("#status-message");
-const recipeDialog = document.querySelector("#recipe-vault");
-const recipeGrid = document.querySelector("#recipe-grid");
-const filterButtons = document.querySelector("#filter-buttons");
-const recipeSearch = document.querySelector("#recipe-search");
-const victoryScreen = document.querySelector("#victory-screen");
+const currentMoodTitle = document.querySelector("#current-mood-title");
+
+const customizeButton = document.querySelector("#customize-button");
+const restartButton = document.querySelector("#restart-button");
+const editPoemButton = document.querySelector("#edit-poem-button");
 const celebrationButton = document.querySelector("#celebration-button");
+const victoryScreen = document.querySelector("#victory-screen");
 
-// Always begin with the completion overlay closed.
-victoryScreen.hidden = true;
+const poemEditor = document.querySelector("#poem-editor");
+const poemEditorFields = document.querySelector("#poem-editor-fields");
 
-let selectedTile = null;
+let selectedRecipes = [];
+let activePickerFilter = "all";
+let currentMood = "cozy";
+let currentPuzzle = [];
 let solvedIds = new Set();
+let selectedTile = null;
+
 let pointerTile = null;
 let pointerId = null;
 let pointerStartX = 0;
 let pointerStartY = 0;
 let dragGhost = null;
 let didDrag = false;
-let activeFilter = "all";
+
+victoryScreen.hidden = true;
+gameArea.hidden = true;
+restartButton.hidden = true;
+editPoemButton.hidden = true;
 
 function shuffle(items) {
   const copy = [...items];
+
   for (let index = copy.length - 1; index > 0; index -= 1) {
     const randomIndex = Math.floor(Math.random() * (index + 1));
     [copy[index], copy[randomIndex]] = [copy[randomIndex], copy[index]];
   }
+
   return copy;
+}
+
+function slugify(value) {
+  return value
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "");
+}
+
+function lowerFirst(value) {
+  if (!value) return "";
+  return value.charAt(0).toLowerCase() + value.slice(1);
+}
+
+function flavorFragment(recipe) {
+  return lowerFirst(recipe.flavor.replace(/[.!?]+$/, ""));
+}
+
+function generatePoemLine(recipe, mood) {
+  const name = recipe.name;
+  const flavor = flavorFragment(recipe);
+
+  const templates = {
+    cozy: {
+      breakfast: `${name} opens the morning—${flavor}.`,
+      bakery: `${name} curls through the room—${flavor}.`,
+      chocolate: `${name} keeps a dark little center—${flavor}.`,
+      drinks: `${name} pours warmth across the page—${flavor}.`,
+      savory: `${name} folds the afternoon together—${flavor}.`,
+      chilled: `${name} cools the noise into a softer moment—${flavor}.`
+    },
+    playful: {
+      breakfast: `${name} wins the breakfast round with ${flavor}.`,
+      bakery: `${name} spins through the board—${flavor}.`,
+      chocolate: `${name} unlocks a cocoa power-up—${flavor}.`,
+      drinks: `${name} casts a sip-sized spell—${flavor}.`,
+      savory: `${name} builds a delicious little fortress—${flavor}.`,
+      chilled: `${name} freezes the chaos into a bonus round—${flavor}.`
+    },
+    bold: {
+      breakfast: `${name} teaches the morning to take up space—${flavor}.`,
+      bakery: `${name} turns softness into a visible choice—${flavor}.`,
+      chocolate: `${name} refuses to make comfort quiet—${flavor}.`,
+      drinks: `${name} wakes the page and changes its color—${flavor}.`,
+      savory: `${name} proves ordinary food can still feel designed—${flavor}.`,
+      chilled: `${name} slows the noise without shrinking joy—${flavor}.`
+    }
+  };
+
+  return templates[mood][recipe.category];
+}
+
+function createPuzzlePiece(recipe, index) {
+  return {
+    id: `${slugify(recipe.name)}-${index}`,
+    recipe: recipe.name,
+    category: recipe.category,
+    emoji: categories[recipe.category].emoji,
+    flavor: recipe.flavor,
+    clue: `Which recipe promises: ${recipe.flavor}`,
+    line: generatePoemLine(recipe, currentMood)
+  };
+}
+
+function setBuilderMessage(message) {
+  builderMessage.textContent = message;
 }
 
 function setStatus(message) {
   statusMessage.textContent = message;
 }
 
-function updateProgress() {
-  const solved = solvedIds.size;
-  scoreNumber.textContent = String(solved);
-  progressFill.style.width = `${(solved / puzzlePieces.length) * 100}%`;
+function renderPickerFilters() {
+  pickerFilters.innerHTML = "";
 
-  document.querySelectorAll(".poem-line").forEach((line, index) => {
-    line.classList.toggle("revealed", solvedIds.has(puzzlePieces[index].id));
+  const filters = [
+    { key: "all", label: "All recipes", emoji: "🍓" },
+    ...Object.entries(categories).map(([key, value]) => ({
+      key,
+      label: value.label,
+      emoji: value.emoji
+    }))
+  ];
+
+  filters.forEach((filter) => {
+    const button = document.createElement("button");
+    button.type = "button";
+    button.className = "filter-button";
+    button.classList.toggle("active", activePickerFilter === filter.key);
+    button.textContent = `${filter.emoji} ${filter.label}`;
+
+    button.addEventListener("click", () => {
+      activePickerFilter = filter.key;
+      renderPickerFilters();
+      renderRecipePicker();
+    });
+
+    pickerFilters.appendChild(button);
+  });
+}
+
+function getSelectionIndex(recipeName) {
+  return selectedRecipes.findIndex((recipe) => recipe.name === recipeName);
+}
+
+function toggleRecipe(recipe) {
+  const existingIndex = getSelectionIndex(recipe.name);
+
+  if (existingIndex >= 0) {
+    selectedRecipes.splice(existingIndex, 1);
+    setBuilderMessage(`${recipe.name} was removed.`);
+  } else {
+    if (selectedRecipes.length >= 12) {
+      setBuilderMessage("Your quilt already has twelve recipes. Remove one before adding another.");
+      return;
+    }
+
+    selectedRecipes.push(recipe);
+    setBuilderMessage(`${recipe.name} became poem line ${selectedRecipes.length}.`);
+  }
+
+  updateBuilder();
+}
+
+function renderRecipePicker() {
+  const query = pickerSearch.value.trim().toLowerCase();
+
+  const visibleRecipes = allRecipes.filter((recipe) => {
+    const matchesFilter =
+      activePickerFilter === "all" ||
+      recipe.category === activePickerFilter;
+
+    const matchesSearch =
+      recipe.name.toLowerCase().includes(query) ||
+      recipe.flavor.toLowerCase().includes(query);
+
+    return matchesFilter && matchesSearch;
   });
 
-  if (solved === puzzlePieces.length) {
-    setStatus("Every recipe is stitched into place. Read the complete poem below, then celebrate when you are ready!");
-    celebrationButton.hidden = false;
+  recipePickerGrid.innerHTML = "";
 
-    window.setTimeout(() => {
-      document.querySelector("#poem-title").scrollIntoView({
-        behavior: "smooth",
-        block: "start"
-      });
-    }, 350);
-  } else {
-    celebrationButton.hidden = true;
+  if (!visibleRecipes.length) {
+    recipePickerGrid.innerHTML =
+      '<p class="empty-picker-message">No recipes matched that search.</p>';
+    return;
   }
+
+  visibleRecipes.forEach((recipe) => {
+    const selectionIndex = getSelectionIndex(recipe.name);
+    const isSelected = selectionIndex >= 0;
+    const selectionFull = selectedRecipes.length >= 12;
+
+    const button = document.createElement("button");
+    button.type = "button";
+    button.className = "picker-card";
+    button.classList.toggle("selected", isSelected);
+    button.classList.toggle("unavailable", selectionFull && !isSelected);
+    button.setAttribute("aria-pressed", String(isSelected));
+
+    button.innerHTML = `
+      ${isSelected
+        ? `<span class="picker-card-number">${selectionIndex + 1}</span>`
+        : ""}
+      <h3>${categories[recipe.category].emoji} ${recipe.name}</h3>
+      <p>${recipe.flavor}</p>
+      <p class="picker-category">${categories[recipe.category].label}</p>
+    `;
+
+    button.addEventListener("click", () => toggleRecipe(recipe));
+    recipePickerGrid.appendChild(button);
+  });
+}
+
+function removeSelectedRecipe(recipeName) {
+  selectedRecipes = selectedRecipes.filter((recipe) => recipe.name !== recipeName);
+  updateBuilder();
+  setBuilderMessage("Recipe removed. Choose another one or change the order.");
+}
+
+function renderSelectedRecipes() {
+  selectedRecipesList.innerHTML = "";
+
+  selectedRecipes.forEach((recipe) => {
+    const item = document.createElement("li");
+    item.className = "selected-chip";
+
+    const label = document.createElement("span");
+    label.textContent = `${categories[recipe.category].emoji} ${recipe.name}`;
+
+    const removeButton = document.createElement("button");
+    removeButton.type = "button";
+    removeButton.className = "chip-remove";
+    removeButton.setAttribute("aria-label", `Remove ${recipe.name}`);
+    removeButton.textContent = "×";
+    removeButton.addEventListener("click", () => removeSelectedRecipe(recipe.name));
+
+    item.append(label, removeButton);
+    selectedRecipesList.appendChild(item);
+  });
+
+  if (!selectedRecipes.length) {
+    const emptyItem = document.createElement("li");
+    emptyItem.textContent = "No recipes chosen yet.";
+    emptyItem.className = "empty-selected";
+    selectedRecipesList.appendChild(emptyItem);
+  }
+}
+
+function updateBuilder() {
+  selectionCount.textContent = String(selectedRecipes.length);
+  buildQuiltButton.disabled = selectedRecipes.length !== 12;
+
+  renderSelectedRecipes();
+  renderRecipePicker();
+
+  if (selectedRecipes.length === 12) {
+    setBuilderMessage("Your twelve-recipe quilt is ready to build.");
+  } else {
+    const remaining = 12 - selectedRecipes.length;
+    setBuilderMessage(
+      `Choose ${remaining} more recipe${remaining === 1 ? "" : "s"}.`
+    );
+  }
+}
+
+function selectRandomRecipes() {
+  selectedRecipes = shuffle(allRecipes).slice(0, 12);
+  updateBuilder();
+  setBuilderMessage("BerryBelle selected twelve surprise recipes.");
+}
+
+function selectSignatureRecipes() {
+  selectedRecipes = signatureNames
+    .map((name) => allRecipes.find((recipe) => recipe.name === name))
+    .filter(Boolean);
+
+  updateBuilder();
+  setBuilderMessage("The signature favorite quilt is ready.");
+}
+
+function clearSelection() {
+  selectedRecipes = [];
+  updateBuilder();
+  setBuilderMessage("The recipe basket is empty again.");
+}
+
+function buildCustomQuilt() {
+  if (selectedRecipes.length !== 12) {
+    setBuilderMessage("Choose exactly twelve recipes before building.");
+    return;
+  }
+
+  currentMood = poemMoodSelect.value;
+  currentPuzzle = selectedRecipes.map(createPuzzlePiece);
+
+  builderPanel.hidden = true;
+  gameArea.hidden = false;
+  restartButton.hidden = false;
+  editPoemButton.hidden = false;
+  currentMoodTitle.textContent = `${moodLabels[currentMood]} poem`;
+
+  restartCurrentQuilt();
+
+  window.setTimeout(() => {
+    gameArea.scrollIntoView({ behavior: "smooth", block: "start" });
+  }, 50);
+}
+
+function showCustomizer() {
+  victoryScreen.hidden = true;
+  builderPanel.hidden = false;
+
+  window.setTimeout(() => {
+    builderPanel.scrollIntoView({ behavior: "smooth", block: "start" });
+  }, 50);
 }
 
 function renderPoem() {
   poemList.innerHTML = "";
-  puzzlePieces.forEach((piece) => {
+
+  currentPuzzle.forEach((piece) => {
     const item = document.createElement("li");
     item.className = "poem-line";
     item.textContent = piece.line;
+    item.classList.toggle("revealed", solvedIds.has(piece.id));
     poemList.appendChild(item);
   });
 }
@@ -535,13 +742,17 @@ function renderPoem() {
 function renderSlots() {
   quiltBoard.innerHTML = "";
 
-  puzzlePieces.forEach((piece, index) => {
+  currentPuzzle.forEach((piece, index) => {
     const slot = document.createElement("article");
     slot.className = "quilt-slot";
     slot.tabIndex = 0;
     slot.setAttribute("role", "button");
-    slot.setAttribute("aria-label", `Quilt space ${index + 1}. ${piece.clue}`);
+    slot.setAttribute(
+      "aria-label",
+      `Quilt space ${index + 1}. ${piece.clue}`
+    );
     slot.dataset.id = piece.id;
+
     slot.innerHTML = `
       <div>
         <span class="slot-number">${String(index + 1).padStart(2, "0")}</span>
@@ -555,7 +766,10 @@ function renderSlots() {
     });
 
     slot.addEventListener("keydown", (event) => {
-      if ((event.key === "Enter" || event.key === " ") && selectedTile) {
+      if (
+        (event.key === "Enter" || event.key === " ") &&
+        selectedTile
+      ) {
         event.preventDefault();
         attemptPlacement(selectedTile, slot);
       }
@@ -573,11 +787,12 @@ function createTile(piece, index) {
   tile.setAttribute("aria-pressed", "false");
   tile.setAttribute("aria-label", `${piece.recipe} recipe tile`);
   tile.dataset.id = piece.id;
-  tile.style.setProperty("--tilt", `${((index % 5) - 2) * 0.8}deg`);
+  tile.style.setProperty("--tilt", `${((index % 5) - 2) * .8}deg`);
+
   tile.innerHTML = `
     <span class="tile-emoji" aria-hidden="true">${piece.emoji}</span>
     <span class="tile-name">${piece.recipe}</span>
-    <span class="tile-hint">Drag me to my riddle</span>
+    <span class="tile-hint">${categories[piece.category].label} recipe</span>
   `;
 
   tile.addEventListener("click", (event) => {
@@ -599,7 +814,10 @@ function createTile(piece, index) {
 
 function renderTiles() {
   tileTray.innerHTML = "";
-  shuffle(puzzlePieces.filter((piece) => !solvedIds.has(piece.id))).forEach((piece, index) => {
+
+  shuffle(
+    currentPuzzle.filter((piece) => !solvedIds.has(piece.id))
+  ).forEach((piece, index) => {
     tileTray.appendChild(createTile(piece, index));
   });
 }
@@ -612,13 +830,14 @@ function selectTile(tile) {
 
   const deselecting = selectedTile === tile;
   selectedTile = deselecting ? null : tile;
+
   tile.classList.toggle("is-selected", !deselecting);
   tile.setAttribute("aria-pressed", String(!deselecting));
 
   setStatus(
     deselecting
       ? "Recipe tile deselected."
-      : `${tile.querySelector(".tile-name").textContent} selected. Choose its quilt riddle.`
+      : `${tile.querySelector(".tile-name").textContent} selected. Choose its riddle.`
   );
 }
 
@@ -659,14 +878,26 @@ function movePointerDrag(event) {
   dragGhost.style.left = `${event.clientX + 15}px`;
   dragGhost.style.top = `${event.clientY + 15}px`;
 
-  document.querySelectorAll(".quilt-slot").forEach((slot) => slot.classList.remove("drag-over"));
-  const slot = document.elementFromPoint(event.clientX, event.clientY)?.closest(".quilt-slot");
+  document
+    .querySelectorAll(".quilt-slot")
+    .forEach((slot) => slot.classList.remove("drag-over"));
+
+  const slot =
+    document
+      .elementFromPoint(event.clientX, event.clientY)
+      ?.closest(".quilt-slot");
+
   if (slot) slot.classList.add("drag-over");
 }
 
 function endPointerDrag(event) {
   const tile = pointerTile;
-  const target = document.elementFromPoint(event.clientX, event.clientY)?.closest(".quilt-slot");
+
+  const target =
+    document
+      .elementFromPoint(event.clientX, event.clientY)
+      ?.closest(".quilt-slot");
+
   cleanupPointerDrag();
 
   if (didDrag && tile && target) {
@@ -680,6 +911,7 @@ function endPointerDrag(event) {
 
 function cancelPointerDrag() {
   cleanupPointerDrag();
+
   window.setTimeout(() => {
     didDrag = false;
   }, 0);
@@ -694,10 +926,14 @@ function cleanupPointerDrag() {
   }
 
   if (dragGhost) dragGhost.remove();
+
   dragGhost = null;
   pointerTile = null;
   pointerId = null;
-  document.querySelectorAll(".quilt-slot").forEach((slot) => slot.classList.remove("drag-over"));
+
+  document
+    .querySelectorAll(".quilt-slot")
+    .forEach((slot) => slot.classList.remove("drag-over"));
 }
 
 function attemptPlacement(tile, slot) {
@@ -713,148 +949,266 @@ function attemptPlacement(tile, slot) {
     slot.classList.remove("wrong-flash");
     void slot.offsetWidth;
     slot.classList.add("wrong-flash");
-    setStatus("That recipe does not answer this riddle. Try another quilt space.");
-    window.setTimeout(() => slot.classList.remove("wrong-flash"), 450);
+
+    setStatus(
+      "That recipe does not match this flavor riddle. Try another space."
+    );
+
+    window.setTimeout(
+      () => slot.classList.remove("wrong-flash"),
+      450
+    );
+
     return;
   }
 
-  const piece = puzzlePieces.find((item) => item.id === tileId);
+  const piece = currentPuzzle.find((item) => item.id === tileId);
+
   solvedIds.add(tileId);
   slot.classList.add("solved", "correct-flash");
-  slot.querySelector(".slot-answer").innerHTML = `<strong>${piece.emoji} ${piece.recipe}</strong>`;
-  slot.setAttribute("aria-label", `${piece.recipe} correctly stitched into quilt space.`);
+
+  slot.querySelector(".slot-answer").innerHTML =
+    `<strong>${piece.emoji} ${piece.recipe}</strong>`;
+
+  slot.setAttribute(
+    "aria-label",
+    `${piece.recipe} correctly stitched into the quilt.`
+  );
 
   if (selectedTile === tile) selectedTile = null;
   tile.remove();
 
-  setStatus(`${piece.recipe} fits! Another poem line has appeared.`);
+  setStatus(
+    `${piece.recipe} fits! Its custom poem line is now visible.`
+  );
+
   updateProgress();
 }
 
-function restartPuzzle() {
+function updateProgress() {
+  const solved = solvedIds.size;
+
+  scoreNumber.textContent = String(solved);
+  progressFill.style.width =
+    `${(solved / currentPuzzle.length) * 100}%`;
+
+  document.querySelectorAll(".poem-line").forEach((line, index) => {
+    line.classList.toggle(
+      "revealed",
+      solvedIds.has(currentPuzzle[index].id)
+    );
+  });
+
+  if (solved === currentPuzzle.length && currentPuzzle.length === 12) {
+    setStatus(
+      "Your custom quilt is complete. Read your full poem below, then celebrate when you are ready!"
+    );
+
+    celebrationButton.hidden = false;
+
+    window.setTimeout(() => {
+      document
+        .querySelector("#poem-title")
+        .scrollIntoView({ behavior: "smooth", block: "start" });
+    }, 350);
+  } else {
+    celebrationButton.hidden = true;
+  }
+}
+
+function restartCurrentQuilt() {
   solvedIds = new Set();
   selectedTile = null;
   victoryScreen.hidden = true;
   celebrationButton.hidden = true;
+
   renderSlots();
   renderTiles();
+  renderPoem();
   updateProgress();
-  setStatus("The quilt is empty again. Choose a recipe tile.");
+
+  setStatus("Your custom quilt is ready. Choose a recipe tile.");
 }
 
 function showHint() {
-  document.querySelectorAll(".hint-glow").forEach((element) => element.classList.remove("hint-glow"));
+  document
+    .querySelectorAll(".hint-glow")
+    .forEach((element) => element.classList.remove("hint-glow"));
 
   let id;
+
   if (selectedTile) {
     id = selectedTile.dataset.id;
   } else {
-    const remaining = puzzlePieces.filter((piece) => !solvedIds.has(piece.id));
+    const remaining =
+      currentPuzzle.filter((piece) => !solvedIds.has(piece.id));
+
     if (!remaining.length) return;
+
     id = remaining[Math.floor(Math.random() * remaining.length)].id;
   }
 
-  const slot = document.querySelector(`.quilt-slot[data-id="${id}"]`);
+  const slot =
+    document.querySelector(`.quilt-slot[data-id="${id}"]`);
+
   slot?.classList.add("hint-glow");
   slot?.scrollIntoView({ behavior: "smooth", block: "center" });
-  setStatus("BerryBelle highlighted the matching quilt space.");
-  window.setTimeout(() => slot?.classList.remove("hint-glow"), 1800);
+
+  setStatus("BerryBelle highlighted the matching riddle.");
+
+  window.setTimeout(
+    () => slot?.classList.remove("hint-glow"),
+    1800
+  );
 }
 
-function renderRecipeFilters() {
-  filterButtons.innerHTML = "";
-  const filters = [
-    { key: "all", label: "All recipes", emoji: "🍓" },
-    ...Object.entries(categories).map(([key, value]) => ({
-      key,
-      label: value.label,
-      emoji: value.emoji
-    }))
-  ];
+function openPoemEditor() {
+  poemEditorFields.innerHTML = "";
 
-  filters.forEach((filter) => {
-    const button = document.createElement("button");
-    button.type = "button";
-    button.className = "filter-button";
-    button.classList.toggle("active", filter.key === activeFilter);
-    button.textContent = `${filter.emoji} ${filter.label}`;
-    button.addEventListener("click", () => {
-      activeFilter = filter.key;
-      renderRecipeFilters();
-      renderRecipeVault();
-    });
-    filterButtons.appendChild(button);
-  });
-}
+  currentPuzzle.forEach((piece, index) => {
+    const row = document.createElement("div");
+    row.className = "poem-edit-row";
 
-function renderRecipeVault() {
-  const query = recipeSearch.value.trim().toLowerCase();
-  recipeGrid.innerHTML = "";
-
-  const visibleRecipes = allRecipes.filter((recipe) => {
-    const matchesFilter = activeFilter === "all" || recipe.category === activeFilter;
-    const matchesSearch =
-      recipe.name.toLowerCase().includes(query) ||
-      recipe.flavor.toLowerCase().includes(query);
-    return matchesFilter && matchesSearch;
-  });
-
-  if (!visibleRecipes.length) {
-    recipeGrid.innerHTML = "<p>No recipes matched that search.</p>";
-    return;
-  }
-
-  visibleRecipes.forEach((recipe) => {
-    const card = document.createElement("article");
-    card.className = "recipe-card";
-    card.innerHTML = `
-      <h3>${categories[recipe.category].emoji} ${recipe.name}</h3>
-      <p>${recipe.flavor}</p>
-      <p class="recipe-category">${categories[recipe.category].label}</p>
+    row.innerHTML = `
+      <span class="poem-edit-number">${index + 1}</span>
+      <label>
+        <span>${piece.emoji} ${piece.recipe}</span>
+        <textarea
+          data-piece-id="${piece.id}"
+          maxlength="220"
+        >${piece.line}</textarea>
+      </label>
     `;
-    recipeGrid.appendChild(card);
+
+    poemEditorFields.appendChild(row);
   });
+
+  poemEditor.showModal();
 }
 
-document.querySelector("#restart-button").addEventListener("click", restartPuzzle);
-document.querySelector("#shuffle-button").addEventListener("click", () => {
-  renderTiles();
-  setStatus("The loose recipe tiles were shuffled.");
+function savePoemEdits() {
+  poemEditorFields
+    .querySelectorAll("textarea")
+    .forEach((textarea) => {
+      const piece =
+        currentPuzzle.find(
+          (item) => item.id === textarea.dataset.pieceId
+        );
+
+      const value = textarea.value.trim();
+
+      if (piece && value) piece.line = value;
+    });
+
+  renderPoem();
+  poemEditor.close();
+
+  setStatus(
+    "Your custom poem wording was saved. Solved lines remain visible."
+  );
+}
+
+function regeneratePoem() {
+  currentMood = poemMoodSelect.value;
+
+  currentPuzzle.forEach((piece) => {
+    const recipe =
+      allRecipes.find((item) => item.name === piece.recipe);
+
+    piece.line = generatePoemLine(recipe, currentMood);
+  });
+
+  currentMoodTitle.textContent = `${moodLabels[currentMood]} poem`;
+  openPoemEditor();
+}
+
+pickerSearch.addEventListener("input", renderRecipePicker);
+
+poemMoodSelect.addEventListener("change", () => {
+  setBuilderMessage(
+    `${moodLabels[poemMoodSelect.value]} will shape your poem.`
+  );
 });
-document.querySelector("#hint-button").addEventListener("click", showHint);
-document.querySelector("#vault-button").addEventListener("click", () => {
-  renderRecipeFilters();
-  renderRecipeVault();
-  recipeDialog.showModal();
-});
-document.querySelector("#close-vault").addEventListener("click", () => recipeDialog.close());
-document.querySelector("#play-again-button").addEventListener("click", restartPuzzle);
+
+document
+  .querySelector("#random-recipes-button")
+  .addEventListener("click", selectRandomRecipes);
+
+document
+  .querySelector("#signature-recipes-button")
+  .addEventListener("click", selectSignatureRecipes);
+
+document
+  .querySelector("#clear-recipes-button")
+  .addEventListener("click", clearSelection);
+
+buildQuiltButton.addEventListener("click", buildCustomQuilt);
+customizeButton.addEventListener("click", showCustomizer);
+document
+  .querySelector("#change-recipes-button")
+  .addEventListener("click", showCustomizer);
+
+restartButton.addEventListener("click", restartCurrentQuilt);
+document
+  .querySelector("#shuffle-button")
+  .addEventListener("click", () => {
+    renderTiles();
+    setStatus("The remaining recipe tiles were shuffled.");
+  });
+
+document
+  .querySelector("#hint-button")
+  .addEventListener("click", showHint);
+
+editPoemButton.addEventListener("click", openPoemEditor);
+
+document
+  .querySelector("#close-poem-editor")
+  .addEventListener("click", () => poemEditor.close());
+
+document
+  .querySelector("#save-poem-button")
+  .addEventListener("click", savePoemEdits);
+
+document
+  .querySelector("#regenerate-poem-button")
+  .addEventListener("click", regeneratePoem);
+
 celebrationButton.addEventListener("click", () => {
   victoryScreen.hidden = false;
 });
-recipeSearch.addEventListener("input", renderRecipeVault);
 
-recipeDialog.addEventListener("click", (event) => {
-  const bounds = recipeDialog.getBoundingClientRect();
-  const outside =
-    event.clientX < bounds.left ||
-    event.clientX > bounds.right ||
-    event.clientY < bounds.top ||
-    event.clientY > bounds.bottom;
-  if (outside) recipeDialog.close();
-});
+document
+  .querySelector("#play-again-button")
+  .addEventListener("click", restartCurrentQuilt);
+
+document
+  .querySelector("#new-quilt-button")
+  .addEventListener("click", showCustomizer);
 
 document.addEventListener("click", (event) => {
-  if (!event.target.closest(".recipe-tile") && !event.target.closest(".quilt-slot") && selectedTile) {
+  if (
+    !event.target.closest(".recipe-tile") &&
+    !event.target.closest(".quilt-slot") &&
+    selectedTile
+  ) {
     selectedTile.classList.remove("is-selected");
     selectedTile.setAttribute("aria-pressed", "false");
     selectedTile = null;
   }
 });
 
-renderSlots();
-renderTiles();
-renderPoem();
-renderRecipeFilters();
-renderRecipeVault();
-updateProgress();
+poemEditor.addEventListener("click", (event) => {
+  const bounds = poemEditor.getBoundingClientRect();
+
+  const outside =
+    event.clientX < bounds.left ||
+    event.clientX > bounds.right ||
+    event.clientY < bounds.top ||
+    event.clientY > bounds.bottom;
+
+  if (outside) poemEditor.close();
+});
+
+renderPickerFilters();
+updateBuilder();
