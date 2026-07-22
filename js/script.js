@@ -470,9 +470,11 @@ const recipeGrid = document.querySelector("#recipe-grid");
 const filterButtons = document.querySelector("#filter-buttons");
 const recipeSearch = document.querySelector("#recipe-search");
 const victoryScreen = document.querySelector("#victory-screen");
+const celebrationButton = document.querySelector("#celebration-button");
 
-// Always begin with the victory popup closed
+// Always begin with the completion overlay closed.
 victoryScreen.hidden = true;
+
 let selectedTile = null;
 let solvedIds = new Set();
 let pointerTile = null;
@@ -506,10 +508,17 @@ function updateProgress() {
   });
 
   if (solved === puzzlePieces.length) {
-    setStatus("Every recipe is stitched into place. The poem is complete!");
+    setStatus("Every recipe is stitched into place. Read the complete poem below, then celebrate when you are ready!");
+    celebrationButton.hidden = false;
+
     window.setTimeout(() => {
-      victoryScreen.hidden = false;
-    }, 450);
+      document.querySelector("#poem-title").scrollIntoView({
+        behavior: "smooth",
+        block: "start"
+      });
+    }, 350);
+  } else {
+    celebrationButton.hidden = true;
   }
 }
 
@@ -726,6 +735,7 @@ function restartPuzzle() {
   solvedIds = new Set();
   selectedTile = null;
   victoryScreen.hidden = true;
+  celebrationButton.hidden = true;
   renderSlots();
   renderTiles();
   updateProgress();
@@ -819,6 +829,9 @@ document.querySelector("#vault-button").addEventListener("click", () => {
 });
 document.querySelector("#close-vault").addEventListener("click", () => recipeDialog.close());
 document.querySelector("#play-again-button").addEventListener("click", restartPuzzle);
+celebrationButton.addEventListener("click", () => {
+  victoryScreen.hidden = false;
+});
 recipeSearch.addEventListener("input", renderRecipeVault);
 
 recipeDialog.addEventListener("click", (event) => {
