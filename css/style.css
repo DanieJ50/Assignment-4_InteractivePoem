@@ -637,6 +637,10 @@ h3 {
   text-transform: uppercase;
   letter-spacing: .08em;
 }
+/* Keep the victory popup closed until the puzzle is completed */
+.victory-screen[hidden] {
+  display: none !important;
+}
 
 .victory-screen {
   position: fixed;
